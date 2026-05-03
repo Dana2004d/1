@@ -324,7 +324,7 @@
           </li>
           <li class="nav-item">
             <a href="#" class="nav-link">
-              
+
               <i class="nav-icon fas fa-map-marker-alt"></i>
               <p>
                 Locations
@@ -375,6 +375,97 @@
               </li>
 
             </ul>
+            <li class="nav-item">
+    <a href="#" class="nav-link">
+        <i class="nav-icon fas fa-hand-holding-heart"></i>
+        <p>
+            Aid Requests
+            <i class="fas fa-angle-left right"></i>
+        </p>
+    </a>
+
+    <ul class="nav nav-treeview">
+
+        <li class="nav-item">
+            <a href="{{ route('aid_requests.index') }}" class="nav-link">
+                <i class="fas fa-list-ul nav-icon"></i>
+                <p>Index</p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ route('aid_requests.create') }}" class="nav-link">
+                <i class="fas fa-plus-circle nav-icon"></i>
+                <p>Create</p>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a href="{{ route('aid_requests.trashed') }}" class="nav-link">
+                <i class="fas fa-trash nav-icon"></i>
+                <p>Trashed</p>
+            </a>
+        </li>
+
+    </ul>
+    <!-- Categories -->
+<li class="nav-item">
+  <a href="#" class="nav-link">
+    <i class="nav-icon fas fa-tags"></i>
+    <p>
+      Categories
+      <i class="fas fa-angle-left right"></i>
+    </p>
+  </a>
+
+  <ul class="nav nav-treeview">
+
+    <li class="nav-item">
+      <a href="{{ route('categories.index') }}" class="nav-link">
+        <i class="fas fa-list-ul nav-icon"></i>
+        <p>Index</p>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="{{ route('categories.create') }}" class="nav-link">
+        <i class="fas fa-plus-circle nav-icon"></i>
+        <p>Create</p>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a href="{{ route('categories.trashed') }}" class="nav-link">
+        <i class="fas fa-trash nav-icon"></i>
+        <p>Trashed</p>
+      </a>
+    </li>
+
+  </ul>
+</li>
+
+<!-- Contact -->
+<li class="nav-item">
+  <a href="#" class="nav-link">
+    <i class="nav-icon fas fa-envelope"></i>
+    <p>
+      Contact
+      <i class="fas fa-angle-left right"></i>
+    </p>
+  </a>
+
+  <ul class="nav nav-treeview">
+
+    <li class="nav-item">
+      <a href="{{ route('contacts.index') }}" class="nav-link">
+        <i class="fas fa-list-ul nav-icon"></i>
+        <p>Index</p>
+      </a>
+    </li>
+
+  </ul>
+</li>
+</li>
           </li>
 
           <li class="nav-header">Settings</li>
@@ -402,12 +493,13 @@
           </li>
 
         </ul>
+
       </nav>
       <!-- /.sidebar-menu -->
     </div>
     <!-- /.sidebar -->
   </aside>
-n
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->

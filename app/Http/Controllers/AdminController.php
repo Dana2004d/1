@@ -3,19 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
-use App\Models\Location;
 use App\Models\User;
+use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-     public function index()
+    public function index()
     {
-        $admins = Admin::orderBy('id','desc')->paginate(10);
-        return response()->view('cms.admin.index',compact('admins'));
+        $admins = Admin::with('user.location')
+            ->orderBy('id','desc')
+            ->paginate(10);
+
+        return response()->view('cms.admin.index', compact('admins'));
     }
 
     /**
@@ -24,7 +28,7 @@ class AdminController extends Controller
     public function create()
     {
         $locations = Location::all();
-        return response()->view('cms.admin.create',compact('locations'));
+        return response()->view('cms.admin.create', compact('locations'));
     }
 
     /**
@@ -32,46 +36,38 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-    $validator = Validator($request->all(), [
+        // ✅ إنشاء الأدمن
+        $admin = new Admin();
+        $admin->email = $request->email;
+        $admin->password = Hash::make($request->password);
 
-    ]);
+        if ($admin->save()) {
 
-    if (! $validator->fails()) {
-      $admins = new Admin();
-    $admins->email = $request->get('email');
-    $admins->password = $request->get('password');
+            // ✅ إنشاء اليوزر المرتبط
+            $user = new User();
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->mobile = $request->mobile;
+            $user->address = $request->address;
+            $user->date = $request->date;
+            $user->status = $request->status;
+            $user->gender = $request->gender;
+            $user->location_id = $request->location_id;
 
-    $isSaved = $admins->save();
+            // ✅ ربط polymorphic
+            $user->actor()->associate($admin);
+            $user->save();
 
-    if ($isSaved) {
+            return response()->json([
+                'icon' => 'success',
+                'title' => 'Admin Created Successfully'
+            ], 200);
+        }
 
-        $users = new User();
-        $users->first_name = $request->get('first_name');
-        $users->last_name = $request->get('last_name');
-        $users->mobile = $request->get('mobile');
-        $users->address = $request->get('address');
-        $users->date = $request->get('date');
-        $users->status = $request->get('status');
-        $users->gender = $request->get('gender');
-        $users->location_id = $request->get('location_id');
-
-        $users->actor()->associate($admins);
-
-        $isSaved = $users->save();
-
-        return response()->json([
-            'icon' => 'success',
-            'title' => 'Created Admin is Successfully',
-        ], 200);
-
-    } else {
         return response()->json([
             'icon' => 'error',
-            'title' => $validator->getMessageBag()->first(),
+            'title' => 'Something went wrong'
         ], 400);
-    }
-
-    }
     }
 
     /**
@@ -79,8 +75,8 @@ class AdminController extends Controller
      */
     public function show($id)
     {
-        $admins = Admin::findOrFail($id);
-        return response()->view('cms.admin.show',compact('admins'));
+        $admin = Admin::with('user.location')->findOrFail($id);
+        return response()->view('cms.admin.show', compact('admin'));
     }
 
     /**
@@ -89,59 +85,62 @@ class AdminController extends Controller
     public function edit($id)
     {
         $locations = Location::all();
-        $admins = Admin::findOrFail($id);
-        return response()->view('cms.admin.edit',compact('admins','locations'));
+        $admin = Admin::with('user')->findOrFail($id);
+
+        return response()->view('cms.admin.edit', compact('admin','locations'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request,  $id)
+    public function update(Request $request, $id)
     {
-        $validator = Validator($request->all(), [
+        $admin = Admin::findOrFail($id);
+        $admin->email = $request->email;
 
-    ]);
+        // ✅ تحديث كلمة المرور لو تم إدخالها
+        if ($request->filled('password')) {
+            $admin->password = Hash::make($request->password);
+        }
 
-    if (! $validator->fails()) {
-      $admins = Admin::findOrFail($id);
-    $admins->email = $request->get('email');
-    // $admins->password = $request->get('password');
+        if ($admin->save()) {
 
-    $isSaved = $admins->save();
+            $user = $admin->user;
 
-    if ($isSaved) {
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->mobile = $request->mobile;
+            $user->address = $request->address;
+            $user->date = $request->date;
+            $user->status = $request->status;
+            $user->gender = $request->gender;
+            $user->location_id = $request->location_id;
 
-        $users = $admins->user;
-        $users->first_name = $request->get('first_name');
-        $users->last_name = $request->get('last_name');
-        $users->mobile = $request->get('mobile');
-        $users->address = $request->get('address');
-        $users->date = $request->get('date');
-        $users->status = $request->get('status');
-        $users->gender = $request->get('gender');
-        $users->location_id = $request->get('location_id');
+            $user->save();
 
-        $users->actor()->associate($admins);
+            return ['redirect' => route('admins.index')];
+        }
 
-        $isSaved = $users->save();
-
-        return ['redirect'=>route('admins.index')];
-
-    } else {
         return response()->json([
             'icon' => 'error',
-            'title' => $validator->getMessageBag()->first(),
+            'title' => 'Update Failed'
         ], 400);
-    }
-
-    }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( $id)
+    public function destroy($id)
     {
-        $admins = Admin::destroy($id);
+        $admin = Admin::findOrFail($id);
+
+        // ✅ حذف اليوزر المرتبط أولاً
+        if ($admin->user) {
+            $admin->user->delete();
+        }
+
+        $admin->delete();
+
+        return response()->json(['status' => true]);
     }
 }

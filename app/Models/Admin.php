@@ -9,4 +9,5 @@ class Admin extends Model
     public function user(){
         return $this->morphOne(User::class, 'actor' , 'actor_type' , 'actor_id' , 'id' );
     }
+    
 }

@@ -12,4 +12,12 @@ class Visitor extends Model
     public function comments(){
         return $this->hasMany(Comment::class);
     }
+    public function aidRequests(){
+    return $this->belongsToMany(AidRequest::class);
+}
+public function contacts()
+{
+    return $this->hasMany(Contact::class);
+}
+
 }

@@ -8,115 +8,57 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-   public function index()
+    public function index()
     {
-        $comments = Comment::with('visitor')->orderBy('id','desc')->paginate(10);
-        return response()->view('cms.comment.index',compact('comments'));
+        $comments = Comment::with('visitor.user')
+            ->orderBy('id','desc')
+            ->paginate(10);
+
+        return view('cms.comment.index', compact('comments'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $visitors = Visitor::all();
-        return response()->view('cms.comment.create',compact('visitors'));
+        $visitors = Visitor::with('user')->get();
+        return view('cms.comment.create', compact('visitors'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validator = Validator($request->all(),[
-            'comment_text'=>'required|string',
-            'visitor_id'=>'nullable',
-
+        Comment::create([
+            'comment_text'=>$request->comment_text,
+            'visitor_id'=>$request->visitor_id
         ]);
-        if(! $validator->fails()){
-            $comments = new Comment();
-            $comments ->comment_text = $request->get('comment_text');
-            $comments ->visitor_id = $request->get('visitor_id');
-            $isSaved = $comments->save();
 
-        return response()->json([
-            'icon' => 'success' ,
-            'title' => 'Created is Successfully',
-        ],200);
-        }
-         else{
-              return response()->json([
-                'icon' => 'error',
-                'title' => $validator->getMessageBag()->first(),
-            ],400);
-
-
-
+        return response()->json(['icon'=>'success']);
     }
 
-
-
-        }
-
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $comments = Comment::findOrFail($id);
-        return response()->view('cms.comment.show',compact('comments'));
+        $comment = Comment::findOrFail($id);
+        return view('cms.comment.show', compact('comment'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        $visitors = Visitor::all();
-        $comments = Comment::findOrFail($id);
-        return response()->view('cms.comment.edit',compact('comments','visitors'));
+        $comment = Comment::findOrFail($id);
+        $visitors = Visitor::with('user')->get();
+        return view('cms.comment.edit', compact('comment','visitors'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request,$id)
     {
-        $validator = Validator($request->all(),[
-            'comment_text'=>'required|string',
-            'visitor_id'=>'nullable',
-
-        ]);
-        if(! $validator->fails()){
-            $comments = Comment::findOrFail($id);
-            $comments ->comment_text = $request->get('comment_text');
-            $comments ->visitor_id = $request->get('visitor_id');
-            $isSaved = $comments->save();
+        $comment = Comment::findOrFail($id);
+        $comment->comment_text = $request->comment_text;
+        $comment->visitor_id = $request->visitor_id;
+        $comment->save();
 
         return ['redirect'=>route('comments.index')];
-        }
-         else{
-              return response()->json([
-                'icon' => 'error',
-                'title' => $validator->getMessageBag()->first(),
-            ],400);
-
-
-
     }
 
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-       $comments = Comment::destroy($id);
+        Comment::destroy($id);
+        return response()->json(['status'=>true]);
     }
 }

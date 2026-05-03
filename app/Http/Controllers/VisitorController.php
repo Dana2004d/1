@@ -2,146 +2,110 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Location;
-use App\Models\User;
 use App\Models\Visitor;
+use App\Models\User;
+use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class VisitorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $visitors = Visitor::orderBy('id','desc')->paginate(10);
-        return response()->view('cms.visitor.index',compact('visitors'));
+        $visitors = Visitor::with('user.location')
+            ->orderBy('id','desc')
+            ->paginate(10);
+
+        return view('cms.visitor.index', compact('visitors'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $locations = Location::all();
-        return response()->view('cms.visitor.create',compact('locations'));
+        return view('cms.visitor.create', compact('locations'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-    $validator = Validator($request->all(), [
+        $visitor = new Visitor();
+        $visitor->email = $request->email;
+        $visitor->password = Hash::make($request->password);
 
-    ]);
+        if($visitor->save()){
 
-    if (! $validator->fails()) {
-      $visitors = new visitor();
-    $visitors->email = $request->get('email');
-    $visitors->password = $request->get('password');
+            $user = new User();
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->mobile = $request->mobile;
+            $user->address = $request->address;
+            $user->date = $request->date;
+            $user->status = $request->status;
+            $user->gender = $request->gender;
+            $user->location_id = $request->location_id;
 
-    $isSaved = $visitors->save();
+            $user->actor()->associate($visitor);
+            $user->save();
 
-    if ($isSaved) {
+            return response()->json([
+                'icon'=>'success',
+                'title'=>'Visitor Created Successfully'
+            ]);
+        }
 
-        $users = new User();
-        $users->first_name = $request->get('first_name');
-        $users->last_name = $request->get('last_name');
-        $users->mobile = $request->get('mobile');
-        $users->address = $request->get('address');
-        $users->date = $request->get('date');
-        $users->status = $request->get('status');
-        $users->gender = $request->get('gender');
-        $users->location_id = $request->get('location_id');
-
-        $users->actor()->associate($visitors);
-
-        $isSaved = $users->save();
-
-        return response()->json([
-            'icon' => 'success',
-            'title' => 'Created visitor is Successfully',
-        ], 200);
-
-    } else {
-        return response()->json([
-            'icon' => 'error',
-            'title' => $validator->getMessageBag()->first(),
-        ], 400);
+        return response()->json(['icon'=>'error'],400);
     }
 
-    }
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $visitors = visitor::findOrFail($id);
-        return response()->view('cms.visitor.show',compact('visitors'));
+        $visitor = Visitor::with('user.location')->findOrFail($id);
+        return view('cms.visitor.show', compact('visitor'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
         $locations = Location::all();
-        $visitors = visitor::findOrFail($id);
-        return response()->view('cms.visitor.edit',compact('visitors','locations'));
+        $visitor = Visitor::with('user')->findOrFail($id);
+        return view('cms.visitor.edit', compact('visitor','locations'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request,  $id)
+    public function update(Request $request,$id)
     {
-        $validator = Validator($request->all(), [
+        $visitor = Visitor::findOrFail($id);
+        $visitor->email = $request->email;
 
-    ]);
+        if($request->filled('password')){
+            $visitor->password = Hash::make($request->password);
+        }
 
-    if (! $validator->fails()) {
-      $visitors = visitor::findOrFail($id);
-    $visitors->email = $request->get('email');
-    // $visitors->password = $request->get('password');
+        if($visitor->save()){
 
-    $isSaved = $visitors->save();
+            $user = $visitor->user;
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->mobile = $request->mobile;
+            $user->address = $request->address;
+            $user->date = $request->date;
+            $user->status = $request->status;
+            $user->gender = $request->gender;
+            $user->location_id = $request->location_id;
+            $user->save();
 
-    if ($isSaved) {
+            return ['redirect'=>route('visitors.index')];
+        }
 
-        $users = $visitors->user;
-        $users->first_name = $request->get('first_name');
-        $users->last_name = $request->get('last_name');
-        $users->mobile = $request->get('mobile');
-        $users->address = $request->get('address');
-        $users->date = $request->get('date');
-        $users->status = $request->get('status');
-        $users->gender = $request->get('gender');
-        $users->location_id = $request->get('location_id');
-
-        $users->actor()->associate($visitors);
-
-        $isSaved = $users->save();
-
-        return ['redirect'=>route('visitors.index')];
-
-    } else {
-        return response()->json([
-            'icon' => 'error',
-            'title' => $validator->getMessageBag()->first(),
-        ], 400);
+        return response()->json(['icon'=>'error'],400);
     }
 
-    }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy( $id)
+    public function destroy($id)
     {
-        $visitors = visitor::destroy($id);
+        $visitor = Visitor::findOrFail($id);
+
+        if($visitor->user){
+            $visitor->user->delete();
+        }
+
+        $visitor->delete();
+
+        return response()->json(['status'=>true]);
     }
 }

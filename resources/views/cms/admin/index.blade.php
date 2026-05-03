@@ -159,7 +159,7 @@ td.text-center {
                   </tbody>
                 </table>
               </div>
-            
+
               {{ $admins->links() }}
             </div>
             <!-- /.card -->
@@ -204,7 +204,6 @@ td.text-center {
 
 
     }
-
 
 
     </script>

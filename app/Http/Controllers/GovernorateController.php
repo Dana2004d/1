@@ -7,104 +7,53 @@ use Illuminate\Http\Request;
 
 class GovernorateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
-    { //$countries = Country::withCount('cities')->orderBy('id','desc')->paginate();
-        $governorates = Governorate::withCount('locations')->orderBy('id','desc')->paginate();
-        return response()->view('cms.governorate.index',compact('governorates'));
+    {
+        $governorates = Governorate::withCount('locations')
+            ->orderBy('id','desc')
+            ->paginate(10);
+
+        return view('cms.governorate.index', compact('governorates'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return response()->view('cms.governorate.create');
+        return view('cms.governorate.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validator = Validator($request->all(),[
-            'name'=>'required|string|min:3|max:20',
-
+        Governorate::create([
+            'name'=>$request->name
         ]);
-        if($validator->fails()){
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->getMessageBag()->first(),
-            ],400);
-        }
-        else{
-              $governorates = new Governorate();
-        $governorates->name = $request->get('name');
 
-
-        $isSaved = $governorates->save();
-
-        return response()->json([
-            'icon' => 'success' ,
-            'title' => 'Created is Successfully',
-        ],200);
-        }
+        return response()->json(['icon'=>'success']);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $governorates = Governorate::findOrFail($id);
-        return response()->view('cms.governorate.show',compact('governorates'));
+        $governorate = Governorate::with('locations')->findOrFail($id);
+        return view('cms.governorate.show', compact('governorate'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        $governorates = Governorate::findOrFail($id);
-        return response()->view('cms.governorate.edit',compact('governorates'));
+        $governorate = Governorate::findOrFail($id);
+        return view('cms.governorate.edit', compact('governorate'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request,$id)
     {
-        $validator = Validator($request->all(),[
-            'name'=>'required|string|min:3|max:20',
+        $governorate = Governorate::findOrFail($id);
+        $governorate->name = $request->name;
+        $governorate->save();
 
-        ]);
-        if(! $validator->fails()){
-            $governorates = Governorate::findOrFail($id);
-            $governorates->Governorate_name = $request->get('name');
-
-
-            $isUpdated = $governorates->save();
-            return['redirect'=>route('governorates.index')];
-
-
-        }
-        else{
-            return response()->json([
-                'icon' => 'error',
-                'title' => $validator->getMessageBag()->first(),
-            ],400);
-
-        }
-
+        return ['redirect'=>route('governorates.index')];
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        $governorates = Governorate::destroy($id);
+        Governorate::destroy($id);
+        return response()->json(['status'=>true]);
     }
 }
