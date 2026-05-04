@@ -55,9 +55,5 @@
 
 
     }
-
-
-
-
-    </script>
+  </script>
 @endsection
