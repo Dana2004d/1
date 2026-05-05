@@ -9,9 +9,11 @@
 <div class="card-header">
 <a href="{{ route('aid_requests.create') }}" class="btn btn-primary">ADD NEW</a>
 </div>
+
 <a href="{{ route('aid_requests.trashed') }}" class="btn btn-dark">
 <i class="fas fa-trash"></i> Trashed
 </a>
+
 <div class="card-body">
 <table class="table table-bordered text-center">
 <thead>
@@ -31,11 +33,7 @@
 <td>{{ $a->id }}</td>
 <td>{{ $a->name }}</td>
 <td>{{ $a->phone }}</td>
-
-<td>
-<span class="badge bg-info">{{ $a->aid_type }}</span>
-</td>
-
+<td><span class="badge bg-info">{{ $a->aid_type }}</span></td>
 <td>{{ $a->company_name }}</td>
 
 <td>

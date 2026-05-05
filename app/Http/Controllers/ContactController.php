@@ -83,4 +83,10 @@ class ContactController extends Controller
         Contact::onlyTrashed()->findOrFail($id)->restore();
         return response()->json(['status'=>true]);
     }
+    public function forceDelete($id)
+{
+    Contact::onlyTrashed()->findOrFail($id)->forceDelete();
+    return response()->json(['status'=>true]);
+}
+
 }

@@ -96,16 +96,48 @@ class VisitorController extends Controller
         return response()->json(['icon'=>'error'],400);
     }
 
-    public function destroy($id)
-    {
-        $visitor = Visitor::findOrFail($id);
+public function destroy($id)
+{
+    $visitor = Visitor::findOrFail($id);
 
-        if($visitor->user){
-            $visitor->user->delete();
-        }
-
-        $visitor->delete();
-
-        return response()->json(['status'=>true]);
+    if ($visitor->user) {
+        $visitor->user->delete(); // soft delete
     }
+
+    $visitor->delete(); // soft delete
+
+    return response()->json(['status' => true]);
+}
+public function trashed()
+{
+    $visitors = Visitor::onlyTrashed()
+        ->with(['user.location'])
+        ->orderBy('id','desc')
+        ->get();
+
+    return view('cms.visitor.trashed', compact('visitors'));
+}
+
+public function forceDelete($id)
+{
+    $visitor = Visitor::withTrashed()->findOrFail($id);
+
+    // احذف user أولاً (حذف نهائي)
+    if ($visitor->user) {
+        $visitor->user->forceDelete(); // 👈 أهم تعديل
+    }
+
+    // ثم احذف visitor نهائياً
+    $visitor->forceDelete();
+
+    return redirect()->route('visitors.trashed');
+}
+public function restore($id)
+{
+    $visitor = Visitor::withTrashed()->with('user')->findOrFail($id);
+
+    $visitor->restore();
+
+    return redirect()->route('visitors.trashed');
+}
 }

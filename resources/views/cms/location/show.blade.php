@@ -18,7 +18,7 @@
               <div class="card-body">
                 <form>
                   <div class="row">
-                    
+
                     <div class="col-sm-12">
                       <!-- text input -->
                       <div class="form-group">
@@ -29,7 +29,7 @@
                         class="form-control"
                         id="name" disabled
                         name="name"
-                        value="{{ $locations->name }}"
+                        value="{{ $location->name }}"
                         >
                       </div>
 

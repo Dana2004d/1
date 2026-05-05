@@ -2,94 +2,67 @@
 
 @section('title','Edit Location')
 @section('main-title','Edit Location')
-@section('sub-title','edit location')
-
-
-
-@section('styles')
-@endsection
+@section('sub-title','Edit Location')
 
 @section('content')
-{{-- <div class="card card-warning"> --}}
 <div class="card card-warning">
-             <div class="card-header">
-                <h3 class="card-title">Edit  Location</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label>Governorate</label>
-                  <select class="form-control select2" id="governorate_id" name="governorate_id" style="width: 100%;">
-                    {{-- <option selected>{{ $locations->governorate->governorate_name ?? "" }}</option> --}}
-                    @foreach($governorates as $governorate)
 
-                    {{-- <option value="{{ $governorate->id }}">{{ $governorate->governorate_name }}</option> --}}
-                    <option @if ($governorate->id == $locations->governorate_id) selected @endif value="{{ $governorate->id ?? ""}}">
-                        {{ $governorate->name ?? ""}}
+<div class="card-header">
+<h3 class="card-title">Edit Location</h3>
+</div>
 
-                    </option>
-                    @endforeach
+<div class="card-body">
 
+<div class="form-group">
+<label>Governorate</label>
 
-                  </select>
-   
-                </div>
-                <!-- /.form-group -->
+<select class="form-control" id="governorate_id">
 
-                <!-- /.form-group -->
-              </div>
-              <!-- /.col -->
+@foreach($governorates as $governorate)
+<option
+@if ($governorate->id == $location->governorate_id) selected @endif
+value="{{ $governorate->id }}">
+{{ $governorate->name }}
+</option>
+@endforeach
 
-              <!-- /.col -->
-            </div>
-                <form>
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="name">Location Name</label>
+</select>
 
-                        <input
-                        type="text"
-                        class="form-control"
-                        id="name"
-                        name="name"
-                        value="{{ $locations->name }}"
-                        >
-                      </div>
-                    </div>
+</div>
 
-                  <div class="card-footer">
-                  <button type="button" onclick="performUpdate({{ $locations->id }})" class="btn btn-info">Update</button>
-                  <a href="{{ route('locations.index') }}"type="submit" class="btn btn-primary">GO BACK</a>
-                </div>
-                </form>
-              </div>
-              <!-- /.card-body -->
-            </div>
+<div class="form-group">
+<label>Location Name</label>
+
+<input type="text"
+class="form-control"
+id="name"
+value="{{ $location->name }}">
+</div>
+
+</div>
+
+<div class="card-footer">
+<button onclick="performUpdate({{ $location->id }})" class="btn btn-info">
+Update
+</button>
+
+<a href="{{ route('locations.index') }}" class="btn btn-primary">
+GO BACK
+</a>
+</div>
+
+</div>
 @endsection
 
 @section('scripts')
-
 <script>
-    function performUpdate(id){
-        let formData = new FormData();
-        formData.append( 'name',document.getElementById('name').value);
-        formData.append( 'governorate_id',document.getElementById('governorate_id').value);
+function performUpdate(id){
+    let data = new FormData();
 
-        storeRoute('/cms/admin/locations_update/'+id,formData)
+    data.append('name', document.getElementById('name').value);
+    data.append('governorate_id', document.getElementById('governorate_id').value);
 
-
-
-
-    }
-
-
-
-    </script>
-
-
-
+    storeRoute('/cms/admin/locations_update/'+id, data);
+}
+</script>
 @endsection

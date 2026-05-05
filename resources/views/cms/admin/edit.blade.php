@@ -1,198 +1,117 @@
 @extends('cms.parent')
 
 @section('title','Update Admin')
-@section('main-title','Update Admin')
-@section('sub-title','update admin')
-
-
-
-@section('styles')
-@endsection
 
 @section('content')
-{{-- <div class="card card-warning"> --}}
-<div class="card card-warning">
-             <div class="card-header">
-                <h3 class="card-title">Update Admin</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label>Location</label>
-                  <select class="form-control select2" id="location_id" name="location_id" style="width: 100%;">
-                    {{-- <option selected="selected">Alabama</option> --}}
-                    @foreach($locations as $location)
 
-                    {{-- <option value="{{ $country->id }}">{{ $country->country_name }}</option> --}}
-                    <option @if ($location->id == $admins->user->location->location_id) selected @endif value="{{ $location->id ?? ""}}">
-                        {{ $location->name ?? ""}}
+<div class="card shadow-sm">
 
-                    </option>
-                    @endforeach
-
-                  </select>
-                </div>
-                <!-- /.form-group -->
-
-                <!-- /.form-group -->
-              </div>
-              <!-- /.col -->
-
-              <!-- /.col -->
-            </div>
-                <form>
-                  <div class="row">
-                    <div class="col-md-4">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="first_name">First Name</label>
-
-                        <input
-                        type="text"
-                        class="form-control"
-                        id="first_name"
-                        name="first_name"
-                        value="{{ $admins->user->first_name }}"
-                        >
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="last_name">Last Name</label>
-
-                        <input
-                        type="text"
-                        class="form-control"
-                        id="last_name"
-                        name="last_name"
-                        value="{{ $admins->user->last_name }}"
-                        >
-                      </div>
-                    </div>
-                    <div class="col-md-4">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="email">Email</label>
-
-                        <input
-                        type="email"
-                        class="form-control"
-                        id="email"
-                        name="email"
-                        value="{{ $admins->email }}"
-                        >
-                      </div>
-                    </div>
-
-                    <div class="col-md-4">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="mobile">Mobile</label>
-
-                        <input
-                        type="text"
-                        class="form-control"
-                        id="mobile"
-                        name="mobile"
-                        value="{{ $admins->user->mobile }}"
-                        >
-                      </div>
-                    </div>
-                     <div class="col-md-4">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="date">Date</label>
-
-                        <input
-                        type="date"
-                        class="form-control"
-                        id="date"
-                        name="date"
-                        value="{{ $admins->user->date }}"
-                        >
-                      </div>
-                    </div>
-                     <div class="col-md-12">
-                      <!-- text input -->
-                      <div class="form-group">
-                        <label for="address">Address</label>
-
-                        <input
-                        type="text"
-                        class="form-control"
-                        id="address"
-                        name="address"
-                        value="{{ $admins->user->address }}"
-                        >
-                      </div>
-                    </div>
-                {{-- <div class="row"> --}}
-
-    <div class="form-group col-md-6">
-        <label for="gender">Gender</label>
-        <select name="gender" id="gender" class="form-select form-select-sm" style="width: 100%;">
-            <option selected hidden> {{ $admins->user->gender }} </option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-        </select>
+    <div class="card-header bg-warning text-white">
+        <h4 class="mb-0">Update Admin</h4>
     </div>
 
-    <div class="form-group col-md-6">
-        <label for="status">Status</label>
-        <select name="status" id="status" class="form-select form-select-sm" style="width: 100%;">
-            <option selected hidden> {{ $admins->user->status }} </option>
-            <option value="active">Active</option>
-            <option value="inactive">InActive</option>
-        </select>
+    <div class="card-body">
+
+        <form>
+
+            <div class="row g-3">
+
+                <!-- Location -->
+                <div class="col-md-12">
+                    <label class="form-label">Location</label>
+                    <select class="form-control" id="location_id">
+
+                        @foreach($locations as $location)
+                            <option
+                                value="{{ $location->id }}"
+                                @if($location->id == optional($admin->user)->location_id) selected @endif
+                            >
+                                {{ $location->name }}
+                            </option>
+                        @endforeach
+
+                    </select>
+                </div>
+
+                <!-- First Name -->
+                <div class="col-md-4">
+                    <label>First Name</label>
+                    <input type="text" id="first_name" class="form-control"
+                           value="{{ $admin->user->first_name ?? '' }}">
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-md-4">
+                    <label>Last Name</label>
+                    <input type="text" id="last_name" class="form-control"
+                           value="{{ $admin->user->last_name ?? '' }}">
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-4">
+                    <label>Email</label>
+                    <input type="email" id="email" class="form-control"
+                           value="{{ $admin->email ?? '' }}">
+                </div>
+
+                <!-- Mobile -->
+                <div class="col-md-4">
+                    <label>Mobile</label>
+                    <input type="text" id="mobile" class="form-control"
+                           value="{{ $admin->user->mobile ?? '' }}">
+                </div>
+
+                <!-- Date -->
+                <div class="col-md-4">
+                    <label>Date</label>
+                    <input type="date" id="date" class="form-control"
+                           value="{{ $admin->user->date ?? '' }}">
+                </div>
+
+                <!-- Address -->
+                <div class="col-md-12">
+                    <label>Address</label>
+                    <input type="text" id="address" class="form-control"
+                           value="{{ $admin->user->address ?? '' }}">
+                </div>
+
+                <!-- Gender -->
+                <div class="col-md-6">
+                    <label>Gender</label>
+                    <select id="gender" class="form-control">
+                        <option value="male" @if(optional($admin->user)->gender=='male') selected @endif>Male</option>
+                        <option value="female" @if(optional($admin->user)->gender=='female') selected @endif>Female</option>
+                    </select>
+                </div>
+
+                <!-- Status -->
+                <div class="col-md-6">
+                    <label>Status</label>
+                    <select id="status" class="form-control">
+                        <option value="active" @if(optional($admin->user)->status=='active') selected @endif>Active</option>
+                        <option value="inactive" @if(optional($admin->user)->status=='inactive') selected @endif>Inactive</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="card-footer text-end">
+
+        <button onclick="performUpdate({{ $admin->id }})"
+                class="btn btn-warning">
+            Update
+        </button>
+
+        <a href="{{ route('admins.index') }}" class="btn btn-secondary">
+            Back
+        </a>
+
     </div>
 
 </div>
-
-
-
-
-
-                  <div class="card-footer">
-                  <button type="button" onclick="performUpdate({{ $admins->id }})" class="btn btn-info">Update</button>
-                  <a href="{{ route('admins.index') }}"type="submit" class="btn btn-primary">GO BACK</a>
-                </div>
-                </form>
-              </div>
-              <!-- /.card-body -->
-            </div>
-@endsection
-
-@section('scripts')
-
-<script>
-    function performUpdate(id){
-        let formData = new FormData();
-        formData.append( 'first_name',document.getElementById('first_name').value);
-        formData.append( 'last_name',document.getElementById('last_name').value);
-        formData.append( 'location_id',document.getElementById('location_id').value);
-        formData.append( 'email',document.getElementById('email').value);
-        // formData.append( 'password',document.getElementById('password').value);
-        formData.append( 'address',document.getElementById('address').value);
-        formData.append( 'mobile',document.getElementById('mobile').value);
-        formData.append( 'gender',document.getElementById('gender').value);
-        formData.append( 'status',document.getElementById('status').value);
-        formData.append( 'date',document.getElementById('date').value);
-       // formData.append( 'image',document.getElementById('image').files[0]);
-
-        storeRoute('/cms/admin/admins_update/' +id ,formData);
-
-
-
-
-    }
-
-
-
-    </script>
-
-
 
 @endsection

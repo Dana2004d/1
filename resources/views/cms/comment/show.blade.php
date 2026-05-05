@@ -18,7 +18,7 @@
               <div class="card-body">
                 <form>
                   <div class="row">
-                   
+
                     <div class="col-sm-12">
                       <!-- text input -->
                       <div class="form-group">
@@ -29,7 +29,7 @@
                         class="form-control"
                         id="comment_text" disabled
                         name="comment_text"
-                        value="{{ $comments->comment_text }}"
+                        value="{{ $comment->comment_text }}"
                         >
                       </div>
 

@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Admin extends Model
 {
+       use SoftDeletes;
     public function user(){
         return $this->morphOne(User::class, 'actor' , 'actor_type' , 'actor_id' , 'id' );
     }
-    
+
 }

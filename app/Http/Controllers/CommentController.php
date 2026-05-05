@@ -8,14 +8,15 @@ use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
-    public function index()
-    {
-        $comments = Comment::with('visitor.user')
-            ->orderBy('id','desc')
-            ->paginate(10);
+ public function index()
+{
+    $comments = Comment::with('visitor.user')
+        ->whereNull('deleted_at')
+        ->orderBy('id','desc')
+        ->paginate(10);
 
-        return view('cms.comment.index', compact('comments'));
-    }
+    return view('cms.comment.index', compact('comments'));
+}
 
     public function create()
     {
@@ -59,6 +60,27 @@ class CommentController extends Controller
     public function destroy($id)
     {
         Comment::destroy($id);
+        return response()->json(['status'=>true]);
+    }
+    public function trashed()
+{
+    $comments = Comment::onlyTrashed()
+        ->with('visitor.user')
+        ->orderBy('id','desc')
+        ->paginate(10);
+
+    return view('cms.comment.trashed', compact('comments'));
+}
+
+    public function restore($id)
+    {
+        Comment::withTrashed()->findOrFail($id)->restore();
+        return response()->json(['status'=>true]);
+    }
+
+    public function forceDelete($id)
+    {
+        Comment::withTrashed()->findOrFail($id)->forceDelete();
         return response()->json(['status'=>true]);
     }
 }

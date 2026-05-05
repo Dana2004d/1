@@ -56,4 +56,27 @@ class GovernorateController extends Controller
         Governorate::destroy($id);
         return response()->json(['status'=>true]);
     }
+    public function trashed()
+{
+    $governorates = Governorate::onlyTrashed()
+        ->withCount('locations')
+        ->orderBy('id','desc')
+        ->paginate(10);
+
+    return view('cms.governorate.trashed', compact('governorates'));
+}
+public function restore($id)
+{
+    Governorate::onlyTrashed()->findOrFail($id)->restore();
+    return response()->json(['status'=>true]);
+}
+public function forceDelete($id)
+{
+    $governorate = Governorate::onlyTrashed()->findOrFail($id);
+
+    $governorate->locations()->forceDelete(); // مهم
+    $governorate->forceDelete();
+
+    return response()->json(['status'=>true]);
+}
 }

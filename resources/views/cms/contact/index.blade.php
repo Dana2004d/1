@@ -7,16 +7,12 @@
 
 <div class="card-header">
 <a href="{{ route('contacts.create') }}" class="btn btn-primary">ADD NEW</a>
-
-<a href="{{ route('contacts.trashed') }}" class="btn btn-dark">
-Trashed
-</a>
+<a href="{{ route('contacts.trashed') }}" class="btn btn-dark">Trashed</a>
 </div>
 
 <div class="card-body">
 
 <table class="table table-bordered text-center">
-
 <thead>
 <tr>
 <th>ID</th>
@@ -28,20 +24,14 @@ Trashed
 </thead>
 
 <tbody>
-
 @foreach($contacts as $contact)
 <tr>
-
 <td>{{ $contact->id }}</td>
-
 <td>{{ $contact->visitor->email }}</td>
-
 <td><span class="badge bg-info">{{ $contact->message_type }}</span></td>
-
 <td>{{ $contact->message }}</td>
 
 <td>
-
 <a href="{{ route('contacts.show',$contact->id) }}" class="btn btn-info btn-sm">
 <i class="fas fa-eye"></i>
 </a>
@@ -53,12 +43,9 @@ Trashed
 <button onclick="performDestroy({{ $contact->id }},this)" class="btn btn-danger btn-sm">
 <i class="fas fa-trash"></i>
 </button>
-
 </td>
-
 </tr>
 @endforeach
-
 </tbody>
 
 </table>

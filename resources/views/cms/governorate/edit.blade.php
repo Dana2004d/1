@@ -28,7 +28,7 @@
                         class="form-control"
                         id="name"
                         name="name"
-                        value="{{ $governorates->name }}"
+                        value="{{ $governorate->name }}"
                         >
                       </div>
                     </div>
@@ -36,7 +36,7 @@
                   </div>
 
                   <div class="card-footer">
-                  <button type="button" onclick="performUpdate({{ $governorates->id }})" class="btn btn-info">Update</button>
+                  <button type="button" onclick="performUpdate({{ $governorate->id }})" class="btn btn-info">Update</button>
                   <a href="{{ route('governorates.index') }}"type="submit" class="btn btn-primary">GO BACK</a>
                 </div>
                 </form>

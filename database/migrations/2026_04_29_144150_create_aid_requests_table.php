@@ -22,6 +22,7 @@ return new class extends Migration
               $table->foreignId('category_id')
       ->constrained()
       ->cascadeOnDelete();
+      $table->enum('status', ['pending', 'approved'])->default('pending');
              $table->softDeletes();
             $table->timestamps();
         });

@@ -57,8 +57,29 @@ class LocationController extends Controller
     }
 
     public function destroy($id)
-    {
-        Location::destroy($id);
-        return response()->json(['status'=>true]);
-    }
+{
+    Location::findOrFail($id)->delete();
+    return response()->json(['status' => true]);
+}
+public function trashed()
+{
+    $locations = Location::onlyTrashed()
+        ->with('governorate')
+        ->orderBy('id','desc')
+        ->paginate(10);
+
+    return view('cms.location.trashed', compact('locations'));
+}
+public function restore($id)
+{
+    Location::onlyTrashed()->findOrFail($id)->restore();
+
+    return response()->json(['status' => true]);
+}
+public function forceDelete($id)
+{
+    Location::onlyTrashed()->findOrFail($id)->forceDelete();
+
+    return response()->json(['status' => true]);
+}
 }

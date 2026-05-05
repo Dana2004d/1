@@ -1,17 +1,17 @@
 @extends('cms.parent')
 
-@section('title','Trashed Contacts')
+@section('title','Trashed Governorates')
+@section('main-title','Trashed Governorates')
+@section('sub-title','Recycle Bin')
 
 @section('content')
 
 <div class="card">
 
-    <div class="card-header d-flex justify-content-between">
-
-        <a href="{{ route('contacts.index') }}" class="btn btn-primary">
+    <div class="card-header">
+        <a href="{{ route('governorates.index') }}" class="btn btn-primary">
             Back
         </a>
-
     </div>
 
     <div class="card-body">
@@ -21,38 +21,36 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Visitor</th>
-                    <th>Type</th>
-                    <th>Message</th>
+                    <th>Name</th>
+                    <th>Locations</th>
                     <th>Actions</th>
                 </tr>
             </thead>
 
             <tbody>
 
-                @forelse($contacts as $contact)
+                @forelse($governorates as $governorate)
                 <tr>
 
-                    <td>{{ $contact->id }}</td>
+                    <td>{{ $governorate->id }}</td>
+                    <td>{{ $governorate->name }}</td>
 
                     <td>
-                        {{ $contact->visitor->email ?? 'N/A' }}
+                        <span class="badge bg-info">
+                            {{ $governorate->locations_count }}
+                        </span>
                     </td>
-
-                    <td>{{ $contact->message_type }}</td>
-
-                    <td>{{ $contact->message }}</td>
 
                     <td>
 
                         <!-- Restore -->
-                        <button onclick="restore({{ $contact->id }},this)"
+                        <button onclick="restore({{ $governorate->id }},this)"
                                 class="btn btn-success btn-sm">
                             Restore
                         </button>
 
                         <!-- Force Delete -->
-                        <button onclick="forceDelete({{ $contact->id }},this)"
+                        <button onclick="forceDelete({{ $governorate->id }},this)"
                                 class="btn btn-danger btn-sm">
                             Delete
                         </button>
@@ -63,7 +61,7 @@
                 @empty
 
                 <tr>
-                    <td colspan="5">No Trashed Contacts Found</td>
+                    <td colspan="4">No Trashed Data</td>
                 </tr>
 
                 @endforelse
@@ -72,9 +70,7 @@
 
         </table>
 
-        <div class="mt-3">
-            {{ $contacts->links() }}
-        </div>
+        {{ $governorates->links() }}
 
     </div>
 
@@ -86,18 +82,16 @@
 
 <script>
 
-// ✅ Restore
-function restore(id, ref){
-    axios.put('/cms/admin/contacts/' + id + '/restore')
+function restore(id,ref){
+    axios.put('/cms/admin/governorates/' + id + '/restore')
     .then(function (){
         ref.closest('tr').remove();
     });
 }
 
-// ✅ Force Delete
-function forceDelete(id, ref){
-    if(confirm('Are you sure you want to delete permanently?')){
-        axios.delete('/cms/admin/contacts/force-delete/' + id)
+function forceDelete(id,ref){
+    if(confirm('Delete forever?')){
+        axios.delete('/cms/admin/governorates/force-delete/' + id)
         .then(function (){
             ref.closest('tr').remove();
         });

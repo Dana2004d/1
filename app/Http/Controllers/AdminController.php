@@ -143,4 +143,32 @@ class AdminController extends Controller
 
         return response()->json(['status' => true]);
     }
+    public function trashed()
+{
+    $admins = Admin::onlyTrashed()
+        ->with('user.location')
+        ->orderBy('id','desc')
+        ->get();
+
+    return view('cms.admin.trashed', compact('admins'));
+}
+public function restore($id)
+{
+    $admin = Admin::withTrashed()->findOrFail($id);
+    $admin->restore();
+
+    return redirect()->route('admins.trashed');
+}
+public function forceDelete($id)
+{
+    $admin = Admin::withTrashed()->findOrFail($id);
+
+    if ($admin->user) {
+        $admin->user->forceDelete();
+    }
+
+    $admin->forceDelete();
+
+    return redirect()->route('admins.trashed');
+}
 }

@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::paginate(2);
+        $categories = Category::paginate(10);
         return view('cms.categories.index', compact('categories'));
     }
 
@@ -55,4 +55,9 @@ class CategoryController extends Controller
         Category::onlyTrashed()->findOrFail($id)->restore();
         return response()->json(['status'=>true]);
     }
+    public function show($id)
+{
+    $category = Category::findOrFail($id);
+    return view('cms.categories.show', compact('category'));
+}
 }
