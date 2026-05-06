@@ -62,7 +62,7 @@ value="{{ $aid_request->link }}">
 <option value="{{ $visitor->id }}"
 @if($aid_request->visitors->contains($visitor->id)) selected @endif>
 
-{{ $visitor->first_name }}
+{{ optional($visitor->user)->first_name }} {{ optional($visitor->user)->last_name }}
 
 </option>
 @endforeach

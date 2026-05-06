@@ -6,6 +6,7 @@
 
 <input id="name" class="form-control mb-2" placeholder="Name">
 <input id="phone" class="form-control mb-2" placeholder="Phone">
+<input id="company_name" class="form-control mb-2" placeholder="Company">
 
 <select id="aid_type" class="form-control mb-2">
 <option value="food">Food</option>
@@ -23,7 +24,7 @@
 <select id="visitors" class="form-control mb-2" multiple>
 @foreach($visitors as $v)
 <option value="{{ $v->id }}">
-{{ optional($v->user)->first_name }} {{ optional($v->user)->last_name }}
+    {{ $v->email }}
 </option>
 @endforeach
 </select>
@@ -31,9 +32,7 @@
 <textarea id="notes" class="form-control mb-2"></textarea>
 
 <button onclick="storeAid()" class="btn btn-success">Save</button>
- <div class="card-footer">
-        <a href="{{ route('aid_requests.index') }}" class="btn btn-primary">GO BACK</a>
-    </div>
+
 </div>
 </div>
 @endsection
@@ -45,17 +44,19 @@ let data = new FormData();
 
 data.append('name', name.value);
 data.append('phone', phone.value);
+data.append('company_name', company_name.value);
 data.append('aid_type', aid_type.value);
 data.append('category_id', category_id.value);
 data.append('notes', notes.value);
 
 let visitors = $('#visitors').val();
+
 for(let i=0;i<visitors.length;i++){
     data.append('visitors[]', visitors[i]);
 }
 
 axios.post('/cms/admin/aid_requests', data)
-.then(()=> window.location='/cms/admin/aid_requests');
+.then(() => window.location='/cms/admin/aid_requests');
 }
 </script>
 @endsection

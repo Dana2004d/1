@@ -16,23 +16,29 @@ class AidRequestController extends Controller
     }
 
     public function create()
-    {
-        $visitors = Visitor::with('user')->get();
-        $categories = Category::all();
-        return view('cms.aid_requests.create', compact('visitors','categories'));
-    }
+{
+    $visitors = Visitor::all();
+    $categories = Category::all();
 
-    public function store(Request $request)
-    {
-        $aid = AidRequest::create($request->only([
-            'name','phone','company_name','aid_type','link','notes','category_id'
-        ]));
+    return view('cms.aid_requests.create', compact('visitors','categories'));
+}
 
-        $aid->visitors()->attach($request->visitors ?? []);
+public function store(Request $request)
+{
+    $aid = AidRequest::create($request->only([
+        'name',
+        'phone',
+        'company_name',
+        'aid_type',
+        'link',
+        'notes',
+        'category_id'
+    ]));
 
-        return redirect()->route('aid_requests.index');
-    }
+    $aid->visitors()->attach($request->visitors ?? []);
 
+    return redirect()->route('aid_requests.index');
+}
     public function show($id)
     {
         $aid_request = AidRequest::with('visitors.user')->findOrFail($id);
